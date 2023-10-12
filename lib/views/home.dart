@@ -48,49 +48,38 @@ class HomePage extends StatelessWidget {
             const SizedBox(
               height: 20,
             ),
-            Container(
-              padding: const EdgeInsets.all(10.0),
-              width: double.infinity,
-              height: 80,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
-                color: Colors.grey.withOpacity(0.1),
-              ),
-              child: ListTile(
-                title: Text(
-                  'Workin on my code',
-                ),
-                subtitle: Row(
-                  children: [
-                    Checkbox(value: true, onChanged: (value) {}),
-                    Text('Completed'),
-                  ],
-                ),
-              ),
-            ),
-            const SizedBox(
-              height: 8.0,
-            ),
-            Container(
-              padding: const EdgeInsets.all(10.0),
-              width: double.infinity,
-              height: 80,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
-                color: Colors.grey.withOpacity(0.1),
-              ),
-              child: ListTile(
-                title: Text(
-                  'Workin on my code',
-                ),
-                subtitle: Row(
-                  children: [
-                    Checkbox(value: false, onChanged: (value) {}),
-                    Text('Working..'),
-                  ],
-                ),
-              ),
-            ),
+            Obx(() {
+              return _todoPalController.loading.value
+                  ? Center(
+                      child: CircularProgressIndicator(),
+                    )
+                  : ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: 3,
+                      itemBuilder: (context, index) {
+                        return Container(
+                          padding: const EdgeInsets.all(10.0),
+                          margin: const EdgeInsets.all(10.0),
+                          width: double.infinity,
+                          height: 80,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            color: Colors.grey.withOpacity(0.1),
+                          ),
+                          child: ListTile(
+                            title: Text(
+                              'Workin on my code',
+                            ),
+                            subtitle: Row(
+                              children: [
+                                Checkbox(value: true, onChanged: (value) {}),
+                                Text('Completed'),
+                              ],
+                            ),
+                          ),
+                        );
+                      });
+            }),
           ],
         ),
       ),
