@@ -55,7 +55,8 @@ class HomePage extends StatelessWidget {
                     )
                   : ListView.builder(
                       shrinkWrap: true,
-                      itemCount: 3,
+                      physics: AlwaysScrollableScrollPhysics(),
+                      itemCount: _todoPalController.todos.value.length,
                       itemBuilder: (context, index) {
                         return Container(
                           padding: const EdgeInsets.all(10.0),
@@ -68,12 +69,25 @@ class HomePage extends StatelessWidget {
                           ),
                           child: ListTile(
                             title: Text(
-                              'Workin on my code',
+                              _todoPalController.todos.value[index].text
+                                  .toString(),
                             ),
                             subtitle: Row(
                               children: [
-                                Checkbox(value: true, onChanged: (value) {}),
-                                Text('Completed'),
+                                Checkbox(
+                                    value: _todoPalController
+                                                .todos.value[index].completed ==
+                                            1
+                                        ? true
+                                        : false,
+                                    onChanged: (value) {
+                                      print(value);
+                                    }),
+                                Text(_todoPalController
+                                            .todos.value[index].completed ==
+                                        1
+                                    ? 'Completed'
+                                    : 'Not Completed'),
                               ],
                             ),
                           ),
