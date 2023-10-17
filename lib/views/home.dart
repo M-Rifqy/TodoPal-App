@@ -8,6 +8,7 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final TodoPalController _todoPalController = Get.put(TodoPalController());
+    final TextEditingController _controller = TextEditingController();
 
     return Scaffold(
       appBar: AppBar(
@@ -23,6 +24,7 @@ class HomePage extends StatelessWidget {
               children: [
                 Expanded(
                   child: TextField(
+                    controller: _controller,
                     decoration: InputDecoration(
                         border: OutlineInputBorder(
                           borderSide: BorderSide(
@@ -36,13 +38,23 @@ class HomePage extends StatelessWidget {
                 const SizedBox(
                   width: 10,
                 ),
-                ElevatedButton(
-                  onPressed: () {},
-                  style: ElevatedButton.styleFrom(
-                    elevation: 0,
-                  ),
-                  child: Text('Save'),
-                ),
+                Obx(() {
+                  return _todoPalController.loading.value
+                      ? CircularProgressIndicator()
+                      : ElevatedButton(
+                          onPressed: () async {
+                            await _todoPalController.addTodo(
+                              textdata: _controller.text.trim(),
+                            );
+                            _controller.clear();
+                            _todoPalController.getAllTodo();
+                          },
+                          style: ElevatedButton.styleFrom(
+                            elevation: 0,
+                          ),
+                          child: Text('Save'),
+                        );
+                }),
               ],
             ),
             const SizedBox(
@@ -80,8 +92,14 @@ class HomePage extends StatelessWidget {
                                             1
                                         ? true
                                         : false,
-                                    onChanged: (value) {
-                                      print(value);
+                                    onChanged: (value) async {
+                                      await _todoPalController.updateTodo(
+                                        _todoPalController
+                                            .todos.value[index].id,
+                                        _todoPalController
+                                            .todos.value[index].text,
+                                      );
+                                      _todoPalController.getAllTodo();
                                     }),
                                 Text(_todoPalController
                                             .todos.value[index].completed ==
