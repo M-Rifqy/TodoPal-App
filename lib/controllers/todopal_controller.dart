@@ -45,8 +45,7 @@ class TodoPalController extends GetxController {
 
   Future updateTodo(id, text) async {
     try {
-      var request = await http
-          .put(Uri.parse('http://192.168.0.112:80/api/todos/$id'), headers: {
+      var request = await http.put(Uri.parse('$todosurl/$id'), headers: {
         'Accept': 'Application/json',
       }, body: {
         text: text,
@@ -63,7 +62,6 @@ class TodoPalController extends GetxController {
   }
 
   Future addTodo({required String textdata}) async {
-
     var data = {
       'text': textdata,
     };
@@ -90,4 +88,62 @@ class TodoPalController extends GetxController {
       print(e.toString());
     }
   }
+
+Future editTodo(int id, String newText) async {
+  try {
+    var request = await http.put(
+      Uri.parse('$todosurl/$id'),
+      headers: {
+        'Accept': 'Application/json',
+      },
+      body: {
+        'text': newText, // Only update the text field, not completed
+      },
+    );
+
+    if (request.statusCode == 200) {
+      print('Edited');
+      final editedTodo = todos.value.firstWhere((todo) => todo.id == id);
+      editedTodo.text = newText; // Update the text field
+    } else {
+      print(json.decode(request.body));
+    }
+  } catch (e) {
+    print(e.toString());
+  }
+}
+
+
+Future deleteTodo(int id) async {
+  try {
+    print('Deleting todo with ID: $id');
+    var request = await http.delete(
+      Uri.parse('$todosurl/$id'),
+      headers: {
+        'Accept': 'Application/json',
+      },
+    );
+
+    print('Delete request URL: $todosurl/$id');
+
+if (request.statusCode == 200) {
+  print('Deleted');
+  // Remove the deleted todo from the local list of todos
+  todos.value.removeWhere((todo) => todo.id == id);
+
+  // Create a new RxList to trigger UI update
+  todos.value = RxList([...todos.value]);
+
+  // Update the UI
+  update();
+} else {
+  print('Delete request failed with status code ${request.statusCode}');
+  print(json.decode(request.body));
+}
+
+  } catch (e) {
+    print('Error in deleteTodo: $e');
+  }
+}
+
 }
